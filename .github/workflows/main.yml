@@ -1,0 +1,54 @@
+name: CI/CD to PCF with Docker
+
+on:
+#  push:
+    branches:
+      #- main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build and push Docker image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+          docker build -t my-react-app .
+          docker tag my-react-app $DOCKER_USERNAME/my-react-app:latest
+          docker push $DOCKER_USERNAME/my-react-app:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install CF CLI
+        run: |
+          curl -L "https://packages.cloudfoundry.org/stable?release=linux64-binary&source=github" | tar -zx
+          chmod +x cf
+          mv cf /usr/local/bin
+        
+      - name: Log in to PCF
+        env: 
+          PCF_PASSWORD: ${{ secrets.PCF_PASSWORD }}
+          PCF_API_ENDPOINT: ${{ secrets.PCF_API_ENDPOINT }}
+          PCF_USERNAME: ${{ secrets.PCF_USERNAME }}
+          PCF_ORG: ${{ secrets.PCF_ORG }}
+          PCF_SPACE: ${{ secrets.PCF_SPACE }} 
+        run: cf login -a https://api.cf.us10-001.hana.ondemand.com -u P2007146660 -p Newpcf@123 -o 75f070aftrial -s dev
+     # run: |
+        #  echo ${{ secrets.PCF_PASSWORD }} | docker run -i cloudfoundry/cli cf login -a ${{ secrets.PCF_API_ENDPOINT }} -u ${{ secrets.PCF_USERNAME }} -p -
+        #  docker run cloudfoundry/cli cf target -o ${{ secrets.PCF_ORG }} -s ${{ secrets.PCF_SPACE }}
+
+      - name: Deploy Docker image to PCF
+       # run: cf push srdreact --docker-image mkpalegar/my-react-app:latest
+        #run: cf push srdreact -o $DOCKER_USERNAME/my-react-app:latest
