@@ -29,6 +29,9 @@ COPY package*.json ./
 # Install project dependencies
 RUN npm install
 
+# Install the PostgreSQL client
+RUN apt-get update && apt-get install -y postgresql-client
+
 # Copy the rest of the application code to the working directory
 COPY . .
 
