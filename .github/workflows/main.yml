@@ -1,9 +1,9 @@
 name: CI/CD to PCF with Docker
 
 on:
-#  push:
+  push:
     branches:
-      #- main
+      - main
 
 jobs:
   build:
@@ -50,5 +50,5 @@ jobs:
         #  docker run cloudfoundry/cli cf target -o ${{ secrets.PCF_ORG }} -s ${{ secrets.PCF_SPACE }}
 
       - name: Deploy Docker image to PCF
-       # run: cf push srdreact --docker-image mkpalegar/my-react-app:latest
+        run: cf push srdreact --docker-image mkpalegar/my-react-app:latest
         #run: cf push srdreact -o $DOCKER_USERNAME/my-react-app:latest
