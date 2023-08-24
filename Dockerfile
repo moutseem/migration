@@ -30,7 +30,7 @@ COPY package*.json ./
 RUN npm install
 
 # Install a specific version of PostgreSQL client (pg_dump)
-#RUN apt-get update && apt-get install -y postgresql-client-12=12.15-0+deb10u1 || apt-get install -y postgresql-client
+RUN apt-get update && apt-get install -y postgresql-client-12=12.15-0+deb10u1 #|| apt-get install -y postgresql-client
 
 
 # Copy the rest of the application code to the working directory
