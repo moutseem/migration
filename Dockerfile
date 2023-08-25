@@ -17,19 +17,10 @@
 #EXPOSE 80
 #CMD ["nginx", "-g", "daemon off;"]
 
-FROM ubuntu:20.04
+# Use the official Node.js image as the base image
+FROM node:14
 
-# Set environment variables to prevent interactive prompts during installation
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Update package lists and install required packages
-RUN apt-get update && \
-    apt-get install -y curl gnupg && \
-    curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
-    apt-get install -y nodejs && \
-    apt-get install -y postgresql-client
 # Set the working directory inside the container
-
 WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json to the working directory
@@ -39,11 +30,11 @@ COPY package*.json ./
 RUN npm install
 
 # Install a specific version of PostgreSQL client (pg_dump)
-#RUN apt-get update && apt-get install -y postgresql-client-12
+RUN apt-get update && apt-get install -y postgresql-client-12
 #=12.15-0+deb10u1 #|| apt-get install -y postgresql-client
 
 
-#Copy the rest of the application code to the working directory
+# Copy the rest of the application code to the working directory
 COPY . .
 
 # Build the application
