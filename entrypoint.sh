@@ -4,4 +4,4 @@
 # For example, you might want to run database migrations before starting your app
 
 # Start your application
-npm start
+CMD [ "npm", "start" ]
