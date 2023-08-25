@@ -47,20 +47,18 @@
 #CMD [ "npm", "start" ]
 
 # Use Ubuntu as the base image
-FROM ubuntu:20.04
-
-# Set environment variables to prevent interactive prompts during installation
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Update package lists and install required packages
-RUN apt-get update && \
-    apt-get install -y curl gnupg && \
-    curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
-    apt-get install -y nodejs && \
-    apt-get install -y postgresql-client
+FROM ubuntu:latest
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
+
+# Install required dependencies
+RUN apt-get update && \
+    apt-get install -y curl gnupg2 && \
+    curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get install -y postgresql-client && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
@@ -71,11 +69,14 @@ RUN npm install
 # Copy the rest of the application code to the working directory
 COPY . .
 
+# Copy the entrypoint.sh script to the working directory
+COPY entrypoint.sh .
+
+# Grant execute permissions to the entrypoint script
+RUN chmod +x entrypoint.sh
+
 # Build the application
 RUN npm run build
 
-# Expose a port (if needed)
-# EXPOSE 80
-
-# Start the application when the container runs
-CMD [ "npm", "start" ]
+# Start the application using the entrypoint script
+CMD ["./entrypoint.sh"]
