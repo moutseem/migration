@@ -18,7 +18,46 @@
 #CMD ["nginx", "-g", "daemon off;"]
 
 # Use the official Node.js image as the base image
-FROM node:14
+#FROM node:14
+
+# Set the working directory inside the container
+#WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json to the working directory
+#COPY package*.json ./
+
+# Install project dependencies
+#RUN npm install
+
+# Install a specific version of PostgreSQL client (pg_dump)
+#RUN apt-get update && apt-get install -y postgresql-client-12
+#=12.15-0+deb10u1 #|| apt-get install -y postgresql-client
+
+
+# Copy the rest of the application code to the working directory
+#COPY . .
+
+# Build the application
+#RUN npm run build
+
+# Expose a port (if needed)
+#EXPOSE 80
+
+# Start the application when the container runs
+#CMD [ "npm", "start" ]
+
+# Use Ubuntu as the base image
+FROM ubuntu:20.04
+
+# Set environment variables to prevent interactive prompts during installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update package lists and install required packages
+RUN apt-get update && \
+    apt-get install -y curl gnupg && \
+    curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get install -y postgresql-client
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
@@ -29,11 +68,6 @@ COPY package*.json ./
 # Install project dependencies
 RUN npm install
 
-# Install a specific version of PostgreSQL client (pg_dump)
-RUN apt-get update && apt-get install -y postgresql-client-12
-#=12.15-0+deb10u1 #|| apt-get install -y postgresql-client
-
-
 # Copy the rest of the application code to the working directory
 COPY . .
 
@@ -41,7 +75,7 @@ COPY . .
 RUN npm run build
 
 # Expose a port (if needed)
-EXPOSE 80
+# EXPOSE 80
 
 # Start the application when the container runs
 CMD [ "npm", "start" ]
