@@ -29,6 +29,7 @@ RUN apt-get update && \
     apt-get install -y nodejs && \
     apt-get install -y postgresql-client
 # Set the working directory inside the container
+
 WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json to the working directory
@@ -80,7 +81,7 @@ CMD [ "npm", "start" ]
 #COPY . .
 
 # Build the application
-RUN npm run build
+#RUN npm run build
 
 # Expose a port (if needed)
 #EXPOSE 80
