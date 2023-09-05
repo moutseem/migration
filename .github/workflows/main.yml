@@ -52,3 +52,5 @@ jobs:
       - name: Deploy Docker image to PCF
         run: cf push migsrdreact --docker-image mkpalegar/my-react-app:latest
         #run: cf push srdreact -o $DOCKER_USERNAME/my-react-app:latest
+
+        
